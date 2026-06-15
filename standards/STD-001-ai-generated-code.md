@@ -22,20 +22,34 @@ tool.
 
 ## Evaluator Guidance
 
-Look for substantial blocks of logic that have been added without any accompanying
-provenance comment, paying particular attention to service-layer and controller-layer
-code, where business logic concentrates and where missing provenance carries the most
-risk. A "substantial block" means meaningful logic — a method body, a non-trivial branch
-of control flow, an algorithm — rather than a single line or a trivial accessor. When such
-a block appears in the diff with no provenance comment and its shape suggests it may have
-been generated, flag it under this standard at the *required* severity.
+Flag a method under this standard, at the *required* severity, only when **both** of the
+following hold:
+
+1. **The body contains real business logic** — a conditional, a loop, a calculation, or
+   multi-step processing. A trivial member does not qualify: an empty body, a one-line
+   delegating call, a plain return of a constant or an empty collection, or a getter or
+   setter is never a violation.
+2. **No provenance comment sits immediately above the method.** If a provenance comment is
+   present, the method is **not** a violation — that is the entire purpose of the standard,
+   and it must not be flagged regardless of anything else about the code.
+
+Both conditions must be true. If either fails — the body is trivial, or a provenance
+comment is present — do not flag.
+
+Do not judge whether the code "looks" AI-generated; that is guesswork and produces
+inconsistent results. Judge only the two conditions above. Apply this to service-layer and
+controller-layer classes, where business logic concentrates; code in test classes is out
+of scope (see the non-violations below).
 
 ## What Does Not Constitute a Violation
 
 The following do not require a provenance comment and must not be flagged under this
 standard:
 
-Test data files and fixtures, which contain data rather than production logic. Mock stubs
-used to stand in for real collaborators during testing. Generated output from code
-generators such as protobuf or OpenAPI, which is mechanically produced from a schema and
-is not authored logic in the sense this standard is concerned with.
+Test code of any kind — unit and integration test classes, individual test methods, test
+data files, and fixtures. Provenance is required for production logic in the service and
+controller layers, not for anything under a test source tree, so a change confined to a
+test class is never a violation of this standard even when it contains assertions or setup
+logic. Mock stubs used to stand in for real collaborators during testing. Generated output
+from code generators such as protobuf or OpenAPI, which is mechanically produced from a
+schema and is not authored logic in the sense this standard is concerned with.
