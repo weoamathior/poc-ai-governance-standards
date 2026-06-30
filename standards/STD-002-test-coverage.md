@@ -31,3 +31,5 @@ test. Dependency version bumps, which change what the application depends on rat
 how it behaves. Stub updates and similar changes that add no new service or controller
 behavior. In each of these cases there is no new logic, so the absence of new tests is
 expected and correct.
+
+<!-- wiring check: routes through governance-ci@v1 -->
